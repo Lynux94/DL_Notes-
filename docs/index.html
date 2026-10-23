@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DL Notes — Visual Deep Learning</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/lessons.js"></script>
+  <script src="assets/lesson.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">DL<span>·</span>Notes</a>
+    <button class="icon-btn" data-theme-toggle>☾ Dark</button>
+  </header>
+
+  <main>
+    <div class="kicker">Learn AI step by step</div>
+    <h1>Visual Deep Learning Notes</h1>
+    <p class="lead">One topic at a time. Each lesson builds the idea up with diagrams you click through, then adds a little math and a little code.</p>
+
+    <div class="card" style="margin-top:1.5rem">
+      <div style="display:flex;justify-content:space-between;font-size:.9rem">
+        <strong>Your progress</strong><span class="muted" id="progress-text"></span>
+      </div>
+      <div class="progress"><div id="progress-bar"></div></div>
+    </div>
+
+    <div id="tracks"></div>
+  </main>
+
+  <footer class="site">Built for learning · lessons follow the plan in <code>PLAN.md</code></footer>
+
+  <script>
+    const ready = DL.LESSONS.filter(l => l.status === "ready");
+    const done = ready.filter(l => DL.isDone(l.id)).length;
+    document.getElementById("progress-text").textContent = `${done} of ${ready.length} available lessons done`;
+    document.getElementById("progress-bar").style.width = ready.length ? (100 * done / ready.length) + "%" : 0;
+
+    let n = 0;
+    document.getElementById("tracks").innerHTML = DL.TRACKS.map(t => {
+      const items = DL.LESSONS.filter(l => l.track === t.id);
+      const list = items.length ? items.map(l => {
+        n++;
+        if (l.status !== "ready") {
+          return `<li><div class="lesson-item planned"><div class="num">${n}</div>
+            <div><div class="t">${l.title}<span class="badge">planned</span></div></div></div></li>`;
+        }
+        return `<li><a class="lesson-item ${DL.isDone(l.id) ? "done" : ""}" href="${l.path}">
+          <div class="num">${DL.isDone(l.id) ? "✓" : n}</div>
+          <div><div class="t">${l.title}</div><div class="s">${l.summary || ""}</div></div></a></li>`;
+      }).join("") : `<li class="muted">Papers will appear here as we study them.</li>`;
+      return `<section class="track"><h2>${t.title}</h2><ul class="lesson-list">${list}</ul></section>`;
+    }).join("");
+  </script>
+</body>
+</html>
